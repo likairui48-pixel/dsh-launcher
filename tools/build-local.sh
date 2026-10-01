@@ -66,8 +66,16 @@ javac -nowarn -encoding UTF-8 -source 17 -target 17 \
 [ -f "$OUT/classes/${PKG//.//}/R.class" ] || { echo "javac 产物缺失"; exit 1; }
 
 log "4/6 d8 转 dex"
+# 关键：依赖库必须作为 d8 的 *输入* 一起打进 dex。
+# 只放到 javac 的 classpath 是不够的 —— 清单里声明的类（尤其是 Provider，
+# 它先于 Application.onCreate 实例化）不在 dex 里，启动即 NoClassDefFoundError。
 find "$OUT/classes" -name '*.class' > "$OUT/classes.txt"
-d8 --lib "$AJ" --min-api "$MIN_SDK" --output "$OUT/dex" @"$OUT/classes.txt"
+DEPS=""
+for j in "$TC"/sdk/shizuku-*.jar; do
+  [ -s "$j" ] && DEPS="$DEPS $j"
+done
+# shellcheck disable=SC2086
+d8 --lib "$AJ" --min-api "$MIN_SDK" --output "$OUT/dex" @"$OUT/classes.txt" $DEPS
 
 log "5/6 打包 APK"
 cp "$OUT/base.apk" "$OUT/unsigned.apk"
@@ -92,6 +100,9 @@ apksigner sign --ks "$KS" --ks-pass pass:android --key-pass pass:android \
   --v1-signing-enabled true --v2-signing-enabled true \
   --out "$APK" "$OUT/unsigned.apk"
 apksigner verify --print-certs "$APK" | head -3
+
+log "7/7 校验 dex 定义与清单声明一致"
+python3 "$ROOT/tools/dex-check.py" "$APK" "$APP/AndroidManifest.xml"
 
 log "完成"
 ls -lh "$APK"

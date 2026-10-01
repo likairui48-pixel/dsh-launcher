@@ -44,6 +44,11 @@ jobs:
       - name: Compile debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
+      # 清单里声明的类（Provider 先于 Application.onCreate 实例化）必须真的在 dex 里。
+      # 这是「编译全绿但一打开就闪退」的最常见来源，aapt2 / javac 都不会报。
+      - name: Verify APK dex definitions
+        run: python3 tools/dex-check.py app/build/outputs/apk/debug/*.apk app/src/main/AndroidManifest.xml
+
       - name: Show artifact
         run: ls -lh app/build/outputs/apk/debug/
 

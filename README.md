@@ -98,7 +98,15 @@ bash tools/build-local.sh                    # 产物：build-local/dsh-launcher
 | 文件 | 来源 |
 |------|------|
 | `android.jar` | Android SDK Platform 34（如 `platform-34-ext7_r03.zip`） |
-| `shizuku-api.jar` | `dev.rikka.shizuku:api:13.1.5` 的 aar 里的 `classes.jar` |
+| `shizuku-api.jar` | `dev.rikka.shizuku:api:13.1.5` |
+| `shizuku-provider.jar` | `dev.rikka.shizuku:provider:13.1.5` |
+| `shizuku-aidl.jar` | `dev.rikka.shizuku:aidl:13.1.5`（api 的传递依赖） |
+| `shizuku-shared.jar` | `dev.rikka.shizuku:shared:13.1.5`（api 的传递依赖） |
+
+各取 aar 里的 `classes.jar`。**四个 jar 必须作为 `d8` 的输入一起打进 dex**——
+只放到 javac 的 classpath 是打不进去的，而 `ShizukuProvider` 写在清单里、
+由系统在 `Application.onCreate` **之前**实例化，dex 里没有它就一启动就闪退，
+并且连崩溃日志都来不及写。`tools/build-local.sh` 第 7 步会用 `tools/dex-check.py` 挡住这种情况。
 
 ### 本机推送（github.com:443 不可达时）
 
