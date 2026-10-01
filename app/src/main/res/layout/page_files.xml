@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 顶部工具栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/s_l"
+            android:paddingTop="@dimen/s_m"
+            android:paddingRight="@dimen/s_l"
+            android:paddingBottom="@dimen/s_s">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.dsh.launcher.ui.GlyphView
+                    android:id="@+id/btnUp"
+                    android:layout_width="@dimen/touch"
+                    android:layout_height="@dimen/touch"
+                    android:background="@drawable/bg_icon_btn"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:glyph="back"
+                    app:glyphStroke="2dp"
+                    app:glyphTint="@color/textPrimary" />
+
+                <TextView
+                    android:id="@+id/tvPath"
+                    style="@style/Dsh.Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/s_xs"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:maxLines="1"
+                    android:text="@string/files_root" />
+
+                <com.dsh.launcher.ui.GlyphView
+                    android:id="@+id/btnRefresh"
+                    android:layout_width="@dimen/touch"
+                    android:layout_height="@dimen/touch"
+                    android:background="@drawable/bg_icon_btn"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:glyph="refresh"
+                    app:glyphStroke="2dp"
+                    app:glyphTint="@color/textSecondary" />
+
+                <com.dsh.launcher.ui.GlyphView
+                    android:id="@+id/btnMore"
+                    android:layout_width="@dimen/touch"
+                    android:layout_height="@dimen/touch"
+                    android:background="@drawable/bg_icon_btn"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:glyph="more"
+                    app:glyphStroke="2dp"
+                    app:glyphTint="@color/textSecondary" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_xs"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/crumbRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <!-- 列表 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/s_l"
+            android:layout_marginRight="@dimen/s_l"
+            android:layout_marginBottom="@dimen/s_l"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card"
+            android:clipToOutline="true">
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@drawable/divider_inset"
+                android:dividerHeight="1dp"
+                android:listSelector="@drawable/bg_row"
+                android:paddingBottom="92dp"
+                android:scrollbars="none" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_gravity="top"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/stateBox"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/s_2xl"
+                android:visibility="gone">
+
+                <com.dsh.launcher.ui.GlyphView
+                    android:id="@+id/stateGlyph"
+                    android:layout_width="@dimen/plate_l"
+                    android:layout_height="@dimen/plate_l"
+                    app:glyph="folder"
+                    app:glyphStroke="1.6dp"
+                    app:glyphTint="@color/textTertiary" />
+
+                <TextView
+                    android:id="@+id/stateTitle"
+                    style="@style/Dsh.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/s_m"
+                    android:text="@string/state_empty_title" />
+
+                <TextView
+                    android:id="@+id/stateDesc"
+                    style="@style/Dsh.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/s_xs"
+                    android:gravity="center"
+                    android:text="@string/state_empty_desc" />
+
+                <TextView
+                    android:id="@+id/stateAction"
+                    style="@style/Dsh.Btn.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="@dimen/s_l"
+                    android:paddingLeft="@dimen/s_xl"
+                    android:paddingRight="@dimen/s_xl"
+                    android:text="@string/act_retry"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- 悬浮按钮 -->
+    <com.dsh.launcher.ui.GlyphView
+        android:id="@+id/fab"
+        android:layout_width="@dimen/fab"
+        android:layout_height="@dimen/fab"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/s_xl"
+        android:background="@drawable/bg_fab"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        app:glyph="plus"
+        app:glyphStroke="2.4dp"
+        app:glyphTint="#FFFFFF" />
+
+</FrameLayout>

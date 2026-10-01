@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/s_l"
+    android:paddingTop="@dimen/s_s">
+
+    <View
+        android:layout_width="38dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_grabber" />
+
+    <TextView
+        android:id="@+id/sheetTitle"
+        style="@style/Dsh.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/s_l"
+        android:paddingLeft="@dimen/s_xl"
+        android:paddingRight="@dimen/s_xl" />
+
+    <TextView
+        android:id="@+id/sheetSubtitle"
+        style="@style/Dsh.Label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/s_xs"
+        android:paddingLeft="@dimen/s_xl"
+        android:paddingRight="@dimen/s_xl"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/sheetScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/s_s"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/sheetBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+</LinearLayout>

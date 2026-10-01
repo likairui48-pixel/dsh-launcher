@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- DeepSeek 品牌配色：白底 + 蓝色鲸鱼标志 -->
+    <!-- ========== 设计令牌 · 浅色 ========== -->
+    <color name="bg">#F3F5F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surfaceAlt">#EDF1F7</color>
+    <color name="surfaceSunk">#E9EDF4</color>
+    <color name="border">#E3E8F0</color>
+    <color name="divider">#EDF0F6</color>
+
+    <color name="textPrimary">#0F1729</color>
+    <color name="textSecondary">#6B7688</color>
+    <color name="textTertiary">#9AA5B8</color>
+    <color name="textOnBrand">#FFFFFF</color>
+
+    <color name="brand">#4D6BFE</color>
+    <color name="brandDark">#3A57E8</color>
+    <color name="brandSoft">#EBEFFF</color>
+    <color name="brandBorder">#D6DEFF</color>
+
+    <color name="success">#0E9F6E</color>
+    <color name="successSoft">#E4F7F0</color>
+    <color name="warning">#D97706</color>
+    <color name="warningSoft">#FFF3E0</color>
+    <color name="danger">#E02424</color>
+    <color name="dangerSoft">#FDECEC</color>
+
+    <color name="consoleBg">#0E1626</color>
+    <color name="consoleBorder">#1E2A42</color>
+    <color name="consoleText">#9FB0CC</color>
+    <color name="consoleTitle">#6E80A3</color>
+
+    <color name="iconPlate">#F1F4FA</color>
+    <color name="ripple">#224D6BFE</color>
+    <color name="rippleOnBrand">#40FFFFFF</color>
+    <color name="rippleDanger">#22E02424</color>
+    <color name="scrim">#8A0B1220</color>
+    <color name="track">#E3E8F0</color>
+
     <color name="ic_launcher_background">#FFFFFF</color>
 </resources>

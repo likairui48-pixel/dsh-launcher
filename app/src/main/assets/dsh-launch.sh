@@ -62,3 +62,15 @@ if [ -n "$TOKEN" ]; then
 else
   echo "DSH_URL=$BASE/"
 fi
+
+# 允许局域网访问时，额外回传一个真实 IP 的地址，App 可以显示/复制给电脑用
+if [ "${DSH_HOST:-127.0.0.1}" = "0.0.0.0" ]; then
+  IP="$(ip route get 1.1.1.1 2>/dev/null | grep -o 'src [0-9.]*' | awk '{print $2}' | head -1)"
+  if [ -n "$IP" ]; then
+    if [ -n "$TOKEN" ]; then
+      echo "DSH_LAN_URL=http://$IP:$PORT/?token=$TOKEN"
+    else
+      echo "DSH_LAN_URL=http://$IP:$PORT/"
+    fi
+  fi
+fi

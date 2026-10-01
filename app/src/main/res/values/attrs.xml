@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GlyphView">
+        <attr name="glyph" format="string" />
+        <attr name="glyphTint" format="color" />
+        <attr name="glyphStroke" format="dimension" />
+    </declare-styleable>
+</resources>

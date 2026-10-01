@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/s_xl">
+
+        <TextView
+            style="@style/Dsh.Display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nav_settings" />
+
+        <TextView
+            style="@style/Dsh.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/app_tagline" />
+
+        <!-- 工作区 -->
+        <LinearLayout
+            style="@style/Dsh.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_xl">
+
+            <TextView
+                style="@style/Dsh.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_workspace" />
+
+            <EditText
+                android:id="@+id/edtWorkspace"
+                style="@style/Dsh.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:hint="@string/hint_path"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvWorkspaceHint"
+                style="@style/Dsh.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:text="@string/settings_workspace_desc"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_m"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/btnWorkspaceSave"
+                    style="@style/Dsh.Btn.Primary"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="@string/dlg_save" />
+
+                <TextView
+                    android:id="@+id/btnWorkspaceCheck"
+                    style="@style/Dsh.Btn.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="@dimen/s_s"
+                    android:paddingLeft="@dimen/s_l"
+                    android:paddingRight="@dimen/s_l"
+                    android:text="@string/btn_check" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 服务 -->
+        <LinearLayout
+            style="@style/Dsh.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_l">
+
+            <TextView
+                style="@style/Dsh.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_port" />
+
+            <EditText
+                android:id="@+id/edtPort"
+                style="@style/Dsh.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:hint="@string/settings_port"
+                android:inputType="number"
+                android:maxLines="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_m"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Dsh.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_lan" />
+
+                    <TextView
+                        style="@style/Dsh.Label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/settings_host"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/swLan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 文件显示 -->
+        <LinearLayout
+            style="@style/Dsh.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_l">
+
+            <TextView
+                style="@style/Dsh.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_files" />
+
+            <LinearLayout
+                android:id="@+id/rowHidden"
+                style="@style/Dsh.Row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:background="@android:color/transparent"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp">
+
+                <TextView
+                    style="@style/Dsh.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_hidden" />
+
+                <Switch
+                    android:id="@+id/swHidden"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:id="@+id/rowSort"
+                style="@style/Dsh.Row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:background="@android:color/transparent"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp">
+
+                <TextView
+                    style="@style/Dsh.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_sort" />
+
+                <TextView
+                    android:id="@+id/tvSortValue"
+                    style="@style/Dsh.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/s_xs"
+                    android:text="@string/sort_name" />
+
+                <com.dsh.launcher.ui.GlyphView
+                    android:layout_width="@dimen/icon_s"
+                    android:layout_height="@dimen/icon_s"
+                    app:glyph="chevron"
+                    app:glyphStroke="2dp"
+                    app:glyphTint="@color/textTertiary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 关于 -->
+        <LinearLayout
+            style="@style/Dsh.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_l">
+
+            <TextView
+                style="@style/Dsh.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_about" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Dsh.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_version" />
+
+                <TextView
+                    android:id="@+id/tvVersion"
+                    style="@style/Dsh.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Dsh.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:lineSpacingExtra="2dp"
+                android:text="@string/about_desc"
+                android:textSize="12sp" />
+
+            <TextView
+                style="@style/Dsh.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:text="@string/settings_toolchain_desc"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btnReset"
+            style="@style/Dsh.Btn.Danger"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginTop="@dimen/s_l"
+            android:text="@string/settings_reset" />
+
+    </LinearLayout>
+</ScrollView>

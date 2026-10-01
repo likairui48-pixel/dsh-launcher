@@ -3,6 +3,9 @@
 build/
 app/build/
 
+# 本机直编产物
+build-local/
+
 # Android Studio
 .idea/
 *.iml

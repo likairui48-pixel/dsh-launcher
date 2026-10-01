@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 命名空间根样式：给 Dsh.* 的隐式继承链一个真实存在的父节点 -->
+    <style name="Dsh" />
+
+    <!-- ================= 文本 ================= -->
+    <style name="Dsh.Display">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textSize">@dimen/t_display</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Title">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textSize">@dimen/t_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Body">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textSize">@dimen/t_body</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Label">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">@dimen/t_label</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Section">
+        <item name="android:textColor">@color/textTertiary</item>
+        <item name="android:textSize">@dimen/t_label</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Mono">
+        <item name="android:textColor">@color/consoleText</item>
+        <item name="android:textSize">@dimen/t_mono</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <!-- ================= 容器 ================= -->
+    <style name="Dsh.Card">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">@dimen/s_l</item>
+    </style>
+
+    <style name="Dsh.CardSunk">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_card_sunk</item>
+        <item name="android:padding">@dimen/s_l</item>
+    </style>
+
+    <!-- ================= 按钮 ================= -->
+    <style name="Dsh.Btn">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/t_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Btn.Primary" parent="Dsh.Btn">
+        <item name="android:background">@drawable/bg_btn_primary</item>
+        <item name="android:textColor">@color/textOnBrand</item>
+    </style>
+
+    <style name="Dsh.Btn.Secondary" parent="Dsh.Btn">
+        <item name="android:background">@drawable/bg_btn_secondary</item>
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <style name="Dsh.Btn.Ghost" parent="Dsh.Btn">
+        <item name="android:background">@drawable/bg_btn_ghost</item>
+        <item name="android:textColor">@color/brand</item>
+    </style>
+
+    <style name="Dsh.Btn.Danger" parent="Dsh.Btn">
+        <item name="android:background">@drawable/bg_btn_danger</item>
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <style name="Dsh.Btn.OnBrand" parent="Dsh.Btn">
+        <item name="android:background">@drawable/bg_btn_on_brand</item>
+        <item name="android:textColor">@color/brandDark</item>
+    </style>
+
+    <style name="Dsh.Btn.Tiny" parent="Dsh.Btn">
+        <item name="android:layout_height">34dp</item>
+        <item name="android:textSize">@dimen/t_label</item>
+        <item name="android:paddingLeft">@dimen/s_m</item>
+        <item name="android:paddingRight">@dimen/s_m</item>
+    </style>
+
+    <!-- ================= 其它 ================= -->
+    <style name="Dsh.IconBtn">
+        <item name="android:layout_width">@dimen/touch</item>
+        <item name="android:layout_height">@dimen/touch</item>
+        <item name="android:background">@drawable/bg_icon_btn</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="Dsh.Input">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:paddingLeft">@dimen/s_l</item>
+        <item name="android:paddingRight">@dimen/s_l</item>
+        <item name="android:paddingTop">@dimen/s_m</item>
+        <item name="android:paddingBottom">@dimen/s_m</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textColorHint">@color/textTertiary</item>
+        <item name="android:textSize">@dimen/t_body</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Dsh.Row">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:background">@drawable/bg_row</item>
+        <item name="android:paddingLeft">@dimen/s_l</item>
+        <item name="android:paddingRight">@dimen/s_l</item>
+        <item name="android:paddingTop">@dimen/s_m</item>
+        <item name="android:paddingBottom">@dimen/s_m</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+</resources>

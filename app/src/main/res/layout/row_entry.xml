@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/row_min"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/s_l"
+    android:paddingTop="@dimen/s_s"
+    android:paddingRight="@dimen/s_l"
+    android:paddingBottom="@dimen/s_s">
+
+    <FrameLayout
+        android:layout_width="@dimen/plate_m"
+        android:layout_height="@dimen/plate_m"
+        android:background="@drawable/bg_plate">
+
+        <com.dsh.launcher.ui.GlyphView
+            android:id="@+id/rowGlyph"
+            android:layout_width="@dimen/icon_m"
+            android:layout_height="@dimen/icon_m"
+            android:layout_gravity="center"
+            app:glyph="file"
+            app:glyphStroke="1.8dp"
+            app:glyphTint="@color/brand" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/s_m"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rowName"
+            style="@style/Dsh.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/rowMeta"
+            style="@style/Dsh.Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:maxLines="1"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/rowTag"
+        style="@style/Dsh.Label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/s_s"
+        android:background="@drawable/bg_pill_neutral"
+        android:paddingLeft="@dimen/s_s"
+        android:paddingTop="3dp"
+        android:paddingRight="@dimen/s_s"
+        android:paddingBottom="3dp"
+        android:textSize="11sp"
+        android:visibility="gone" />
+</LinearLayout>

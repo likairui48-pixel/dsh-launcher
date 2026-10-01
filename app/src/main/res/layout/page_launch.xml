@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/s_xl">
+
+        <!-- 标题 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="@dimen/plate_l"
+                android:layout_height="@dimen/plate_l"
+                android:background="@drawable/bg_plate_brand">
+
+                <com.dsh.launcher.ui.GlyphView
+                    android:layout_width="@dimen/icon_l"
+                    android:layout_height="@dimen/icon_l"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    app:glyph="spark"
+                    app:glyphStroke="2dp"
+                    app:glyphTint="@color/brand" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/s_m"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Dsh.Display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name" />
+
+                <TextView
+                    style="@style/Dsh.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/app_tagline" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 状态英雄卡 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_xl"
+            android:background="@drawable/bg_hero"
+            android:elevation="6dp"
+            android:orientation="vertical"
+            android:padding="@dimen/s_xl">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.08"
+                android:text="@string/hero_label"
+                android:textColor="#CCFFFFFF"
+                android:textSize="@dimen/t_micro"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_xs"
+                android:includeFontPadding="false"
+                android:text="@string/state_unknown"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/t_hero"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvStateDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_xs"
+                android:lineSpacingExtra="2dp"
+                android:text="@string/state_desc_idle"
+                android:textColor="#D0FFFFFF"
+                android:textSize="@dimen/t_label" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_l"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/btnLaunch"
+                    style="@style/Dsh.Btn.OnBrand"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="@string/btn_launch" />
+
+                <TextView
+                    android:id="@+id/btnWeb"
+                    style="@style/Dsh.Btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="@dimen/s_s"
+                    android:background="@drawable/bg_btn_on_brand_ghost"
+                    android:paddingLeft="@dimen/s_l"
+                    android:paddingRight="@dimen/s_l"
+                    android:text="@string/btn_open_web"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 运行信息 -->
+        <LinearLayout
+            style="@style/Dsh.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_l">
+
+            <TextView
+                style="@style/Dsh.Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_title" />
+
+            <LinearLayout
+                android:id="@+id/infoBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_xs"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+        <!-- 日志 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_l"
+            android:background="@drawable/bg_console"
+            android:orientation="vertical"
+            android:padding="@dimen/s_l">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:letterSpacing="0.08"
+                    android:text="@string/log_title"
+                    android:textColor="@color/consoleTitle"
+                    android:textSize="@dimen/t_micro"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnCopyLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_row"
+                    android:paddingLeft="@dimen/s_s"
+                    android:paddingTop="@dimen/s_xs"
+                    android:paddingRight="@dimen/s_s"
+                    android:paddingBottom="@dimen/s_xs"
+                    android:text="@string/act_copy"
+                    android:textColor="@color/consoleText"
+                    android:textSize="@dimen/t_label" />
+
+                <TextView
+                    android:id="@+id/btnClearLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/s_xs"
+                    android:background="@drawable/bg_row"
+                    android:paddingLeft="@dimen/s_s"
+                    android:paddingTop="@dimen/s_xs"
+                    android:paddingRight="@dimen/s_s"
+                    android:paddingBottom="@dimen/s_xs"
+                    android:text="@string/act_clear"
+                    android:textColor="@color/consoleText"
+                    android:textSize="@dimen/t_label" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvLog"
+                style="@style/Dsh.Mono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_s"
+                android:minHeight="150dp"
+                android:text="@string/log_empty" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

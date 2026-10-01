@@ -1,17 +1,29 @@
 #!/usr/bin/env node
-/* 静态自检：XML 良构 / 资源引用 / R.id / Java 括号 / YAML 基本结构 */
+/* ============================================================================
+ *  静态自检（CI 门禁）
+ *    1. XML 良构性
+ *    2. 资源定义收集 + 引用解析（@string/@color/@drawable/@layout/@style/@dimen）
+ *    3. style 继承链完整性（隐式点号父样式必须真实存在，aapt2 会因此直接报错）
+ *    4. Java 里的 R.* 引用全部对得上
+ *    5. Java 结构（括号 / package / 同名类）
+ *    6. AndroidManifest 关键项
+ *    7. assets 脚本协议
+ *    8. Gradle / workflow 配置
+ *  用法： node tools/static-check.js .
+ * ========================================================================== */
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = process.argv[2] || '.';
 let errors = 0, warnings = 0, checks = 0;
-const err = (m) => { errors++;  console.log('  ✗ ' + m); };
+const err = (m) => { errors++; console.log('  ✗ ' + m); };
 const warn = (m) => { warnings++; console.log('  ! ' + m); };
 const ok = (m) => { checks++; console.log('  ✓ ' + m); };
 
 function walk(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.name === '.git' || e.name === 'build' || e.name === '.gradle') continue;
+    if (['.git', 'build', '.gradle', 'build-local', 'node_modules'].includes(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) walk(p, out); else out.push(p);
   }
@@ -19,15 +31,14 @@ function walk(dir, out = []) {
 }
 
 const files = walk(ROOT);
+const resDir = path.join(ROOT, 'app/src/main/res');
 console.log(`\n扫描到 ${files.length} 个文件\n`);
 
 /* ---------- 1. XML 良构 ---------- */
 console.log('[1] XML 良构性');
-const VOID_OK = new Set();
 function checkXml(file) {
   const src = fs.readFileSync(file, 'utf8');
   const stack = [];
-  // 先整体抓出“原始标签文本”，再自行判断是否自闭合（避免属性里的 / 被误判）
   const re = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[A-Za-z_][^>]*>/g;
   let m, last = 0, line = 1;
   while ((m = re.exec(src)) !== null) {
@@ -39,7 +50,7 @@ function checkXml(file) {
       const top = stack.pop();
       if (top !== name) err(`${file}:${line} 闭合不匹配 </${name}>，期望 </${top}>`);
     } else if (t.startsWith('<?') || t.startsWith('<!--') || t.startsWith('<![')) {
-      // 声明 / 注释 / CDATA，跳过
+      /* 声明 / 注释 / CDATA */
     } else {
       const name = t.match(/^<\s*([\w.:-]+)/)[1];
       if (!/\/\s*>$/.test(t)) stack.push(name);
@@ -52,64 +63,139 @@ const xmlFiles = files.filter(f => f.endsWith('.xml'));
 for (const f of xmlFiles) checkXml(f);
 ok(`${xmlFiles.length} 个 XML 文件标签闭合正常`);
 
-/* ---------- 2. 资源引用 ---------- */
-console.log('\n[2] 资源引用完整性');
-const resDir = path.join(ROOT, 'app/src/main/res');
-const defined = { string: new Set(), color: new Set(), drawable: new Set(), mipmap: new Set(), layout: new Set(), style: new Set() };
-const typeOfDir = (d) => d.startsWith('values') ? 'values' : d.split('-')[0];
+/* ---------- 2. 资源定义与引用 ---------- */
+console.log('\n[2] 资源定义与引用');
+const defined = {
+  string: new Set(), color: new Set(), dimen: new Set(), bool: new Set(),
+  integer: new Set(), attr: new Set(), style: new Set(), styleable: new Set(),
+  drawable: new Set(), layout: new Set(), mipmap: new Set(), anim: new Set(),
+};
 for (const f of walk(resDir)) {
   if (!f.endsWith('.xml')) continue;
   const rel = path.relative(resDir, f);
   const dir = rel.split(path.sep)[0];
-  const t = typeOfDir(dir);
   const base = path.basename(f, '.xml');
-  if (t === 'values') {
+  if (dir.startsWith('values')) {
     const src = fs.readFileSync(f, 'utf8');
-    for (const m of src.matchAll(/<(string|color|style|dimen|bool|integer)\s+name="([^"]+)"/g)) {
+    for (const m of src.matchAll(/<(string|color|dimen|bool|integer|attr)\s+name="([^"]+)"/g)) {
       if (defined[m[1]]) defined[m[1]].add(m[2]);
     }
-  } else if (defined[t]) {
-    defined[t].add(base);
+    for (const m of src.matchAll(/<style\s+name="([^"]+)"/g)) {
+      defined.style.add(m[1]);
+      defined.style.add(m[1].replace(/\./g, '_'));
+    }
+    for (const m of src.matchAll(/<declare-styleable\s+name="([^"]+)">([\s\S]*?)<\/declare-styleable>/g)) {
+      defined.styleable.add(m[1]);
+      for (const a of m[2].matchAll(/<attr\s+name="([^"]+)"/g)) {
+        defined.styleable.add(`${m[1]}_${a[1]}`);
+      }
+    }
+  } else {
+    const t = dir.split('-')[0];
+    if (defined[t]) defined[t].add(base);
   }
 }
 for (const k of Object.keys(defined)) {
-  console.log(`      ${k}: ${[...defined[k]].join(', ') || '(无)'}`);
+  const list = [...defined[k]];
+  console.log(`      ${k}(${list.length}): ${list.slice(0, 8).join(', ')}${list.length > 8 ? ' …' : ''}`);
 }
+
 const refProblems = [];
-for (const f of [...xmlFiles, path.join(ROOT, 'app/src/main/AndroidManifest.xml')]) {
+const manifestPath = path.join(ROOT, 'app/src/main/AndroidManifest.xml');
+for (const f of [...xmlFiles, manifestPath]) {
   if (!fs.existsSync(f)) continue;
   const src = fs.readFileSync(f, 'utf8');
-  for (const m of src.matchAll(/@(string|color|drawable|mipmap|layout|style)\/([\w.]+)/g)) {
+  for (const m of src.matchAll(/@(?:android:)?(string|color|dimen|drawable|mipmap|layout|style|bool|integer|anim)\/([\w.]+)/g)) {
+    if (m[0].startsWith('@android:')) continue;
     if (!defined[m[1]] || !defined[m[1]].has(m[2])) {
       refProblems.push(`${path.relative(ROOT, f)} → @${m[1]}/${m[2]}`);
     }
   }
 }
 if (refProblems.length) refProblems.forEach(p => err('引用不存在: ' + p));
-else ok('所有 @string/@color/@drawable/@mipmap/@layout 引用都能解析');
+else ok('XML / Manifest 里的资源引用全部能解析');
 
-/* ---------- 3. Java 里的 R.* 引用 ---------- */
-console.log('\n[3] Java 中的 R.* 引用');
-const layoutXml = fs.readFileSync(path.join(resDir, 'layout/activity_main.xml'), 'utf8');
-const layoutIds = new Set([...layoutXml.matchAll(/android:id="@\+id\/(\w+)"/g)].map(m => m[1]));
-const javaFiles = files.filter(f => f.endsWith('.java'));
-for (const f of javaFiles) {
+/* ---------- 3. style 继承链 ---------- */
+console.log('\n[3] style 继承链');
+const styleProblems = [];
+for (const f of walk(path.join(resDir, 'values')).concat(
+    fs.existsSync(path.join(resDir, 'values-night')) ? walk(path.join(resDir, 'values-night')) : [])) {
+  if (!f.endsWith('.xml')) continue;
   const src = fs.readFileSync(f, 'utf8');
-  for (const m of src.matchAll(/R\.id\.(\w+)/g)) {
-    if (!layoutIds.has(m[1])) err(`${path.basename(f)}: R.id.${m[1]} 在布局里不存在`);
-  }
-  for (const m of src.matchAll(/R\.layout\.(\w+)/g)) {
-    if (!fs.existsSync(path.join(resDir, 'layout', m[1] + '.xml'))) err(`${path.basename(f)}: R.layout.${m[1]} 不存在`);
+  for (const m of src.matchAll(/<style\s+name="([^"]+)"([^>]*)>/g)) {
+    const name = m[1];
+    const attrs = m[2];
+    const pm = attrs.match(/parent="([^"]+)"/);
+    if (pm) {
+      const parent = pm[1];
+      if (parent.startsWith('@android:') || parent.startsWith('@')) continue;
+      if (!defined.style.has(parent)) styleProblems.push(`${name} 的 parent="${parent}" 不存在`);
+      continue;
+    }
+    const dot = name.lastIndexOf('.');
+    if (dot > 0) {
+      const implicit = name.slice(0, dot);
+      if (!defined.style.has(implicit)) {
+        styleProblems.push(`${name} 隐式继承 "${implicit}"，但该样式不存在（aapt2 会直接失败）`);
+      }
+    }
   }
 }
-ok(`布局 id: ${[...layoutIds].join(', ')} —— Java 引用全部对得上`);
+if (styleProblems.length) styleProblems.forEach(p => err('style 继承: ' + p));
+else ok('所有 style 的显式 / 隐式父样式都存在');
 
-/* ---------- 4. Java 括号平衡 + 常见笔误 ---------- */
-console.log('\n[4] Java 结构检查');
-// 单遍状态机剥离注释与字面量（顺序很重要：先处理字符串，否则 URL 里的 // 会吃掉整行）
+/* ---------- 4. Java 里的 R.* ---------- */
+console.log('\n[4] Java 中的 R.* 引用');
+const layoutIds = new Set();
+for (const f of walk(path.join(resDir, 'layout'))) {
+  const src = fs.readFileSync(f, 'utf8');
+  for (const m of src.matchAll(/android:id="@\+id\/(\w+)"/g)) layoutIds.add(m[1]);
+}
+const javaFiles = files.filter(f => f.endsWith('.java'));
+let rRefs = 0;
+for (const f of javaFiles) {
+  const src = fs.readFileSync(f, 'utf8');
+  for (const m of src.matchAll(/R\.(\w+)\.(\w+)/g)) {
+    const type = m[1], name = m[2];
+    rRefs++;
+    if (type === 'id') {
+      if (!layoutIds.has(name)) err(`${path.basename(f)}: R.id.${name} 在任何布局里都不存在`);
+    } else if (defined[type]) {
+      if (!defined[type].has(name)) err(`${path.basename(f)}: R.${type}.${name} 未定义`);
+    }
+  }
+}
+ok(`${javaFiles.length} 个 Java 文件、${rRefs} 处 R.* 引用全部有效（布局 id ${layoutIds.size} 个）`);
+
+// 4b. findViewById 的 id 必须属于该类真正加载过的布局，否则运行期就是 NPE
+const layoutIdMap = {};
+for (const f of walk(path.join(resDir, 'layout'))) {
+  const name = path.basename(f, '.xml');
+  const src = fs.readFileSync(f, 'utf8');
+  layoutIdMap[name] = new Set([...src.matchAll(/android:id="@\+id\/(\w+)"/g)].map(m => m[1]));
+}
+let scopeChecked = 0;
+for (const f of javaFiles) {
+  const src = fs.readFileSync(f, 'utf8');
+  const layouts = [...new Set([...src.matchAll(/R\.layout\.(\w+)/g)].map(m => m[1]))];
+  if (layouts.length === 0) continue;
+  const allowed = new Set();
+  for (const l of layouts) {
+    for (const id of (layoutIdMap[l] || [])) allowed.add(id);
+  }
+  for (const m of src.matchAll(/R\.id\.(\w+)/g)) {
+    scopeChecked++;
+    if (!allowed.has(m[1])) {
+      err(`${path.basename(f)}: R.id.${m[1]} 不在它加载的布局里（${layouts.join(', ')}）→ 运行期会 NPE`);
+    }
+  }
+}
+ok(`${scopeChecked} 处 R.id 引用的作用域全部落在对应布局内`);
+
+/* ---------- 5. Java 结构 ---------- */
+console.log('\n[5] Java 结构检查');
 function stripJava(src) {
-  let out = '';
-  let i = 0;
+  let out = '', i = 0;
   const n = src.length;
   while (i < n) {
     const c = src[i], d = src[i + 1];
@@ -124,63 +210,94 @@ function stripJava(src) {
   }
   return out;
 }
-
 for (const f of javaFiles) {
   const src = fs.readFileSync(f, 'utf8');
   const stripped = stripJava(src);
-  const pairs = [['{', '}'], ['(', ')'], ['[', ']']];
-  for (const [a, b] of pairs) {
+  for (const [a, b] of [['{', '}'], ['(', ')'], ['[', ']']]) {
     const na = (stripped.match(new RegExp('\\' + a, 'g')) || []).length;
     const nb = (stripped.match(new RegExp('\\' + b, 'g')) || []).length;
     if (na !== nb) err(`${path.basename(f)}: ${a}${b} 数量不等 (${na} vs ${nb})`);
   }
   if (!/package\s+com\.dsh\.launcher;/.test(src)) err(`${path.basename(f)}: package 声明不对`);
   const cls = path.basename(f, '.java');
-  if (!new RegExp(`(class|interface)\\s+${cls}\\b`).test(src)) err(`${path.basename(f)}: 缺少同名 public 类`);
-  ok(`${path.basename(f)} 括号平衡、结构正常`);
+  if (!new RegExp(`(class|interface|enum)\\s+${cls}\\b`).test(src)) {
+    err(`${path.basename(f)}: 缺少同名类型声明`);
+  }
 }
+ok(`${javaFiles.length} 个 Java 文件括号平衡、结构正常`);
 
-/* ---------- 5. AndroidManifest 关键点 ---------- */
-console.log('\n[5] AndroidManifest 关键项');
-const mf = fs.readFileSync(path.join(ROOT, 'app/src/main/AndroidManifest.xml'), 'utf8');
+/* ---------- 6. Manifest ---------- */
+console.log('\n[6] AndroidManifest 关键项');
+const mf = fs.readFileSync(manifestPath, 'utf8');
 const musts = [
-  ['com.termux.permission.RUN_COMMAND 声明', /<uses-permission[^>]*com\.termux\.permission\.RUN_COMMAND/],
+  ['RUN_COMMAND 权限声明', /<uses-permission[^>]*com\.termux\.permission\.RUN_COMMAND/],
   ['queries 里包含 com.termux', /<queries>[\s\S]*?com\.termux[\s\S]*?<\/queries>/],
   ['ShizukuProvider 已注册', /rikka\.shizuku\.ShizukuProvider/],
   ['ShizukuProvider authority 用 applicationId 变量', /authorities="\$\{applicationId\}\.shizuku"/],
+  ['Application 类已声明', /android:name="\.DSHApp"/],
   ['主 Activity 已声明', /android:name="\.MainActivity"/],
+  ['编辑器 Activity 已声明', /android:name="\.EditorActivity"/],
+  ['使用了设计主题', /android:theme="@style\/AppTheme"/],
   ['没有 package= 属性（用 namespace）', /^(?![\s\S]*<manifest[^>]*\spackage=)[\s\S]*$/],
 ];
 for (const [name, re] of musts) (re.test(mf) ? ok(name) : err('缺少: ' + name));
 
-/* ---------- 6. assets 脚本 ---------- */
-console.log('\n[6] 内置脚本');
-const assetPath = path.join(ROOT, 'app/src/main/assets/dsh-launch.sh');
-if (!fs.existsSync(assetPath)) err('assets/dsh-launch.sh 不存在');
+/* ---------- 7. assets 脚本 ---------- */
+console.log('\n[7] 内置脚本');
+const launch = path.join(ROOT, 'app/src/main/assets/dsh-launch.sh');
+const fsScript = path.join(ROOT, 'app/src/main/assets/dsh-fs.sh');
+if (!fs.existsSync(launch)) err('assets/dsh-launch.sh 不存在');
 else {
-  const sh = fs.readFileSync(assetPath, 'utf8');
+  const sh = fs.readFileSync(launch, 'utf8');
   ['DSH_STATE=', 'DSH_URL=', 'DSH_OPENED=1', 'start-dsh.sh'].forEach(k => {
-    sh.includes(k) ? ok(`脚本包含 ${k}`) : err(`脚本缺少 ${k}`);
+    sh.includes(k) ? ok(`dsh-launch.sh 包含 ${k}`) : err(`dsh-launch.sh 缺少 ${k}`);
   });
-  if (!/^#!/.test(sh)) warn('脚本没有 shebang（我们用 sh -c 执行，不强制，但建议保留）');
-  const java = fs.readFileSync(path.join(ROOT, 'app/src/main/java/com/dsh/launcher/MainActivity.java'), 'utf8');
-  if (!java.includes('readAsset("dsh-launch.sh")')) err('Java 里没有 readAsset("dsh-launch.sh")，名字对不上');
-  else ok('Java 读取的 asset 名与文件名一致');
+  const java = fs.readFileSync(path.join(ROOT, 'app/src/main/java/com/dsh/launcher/LaunchPage.java'), 'utf8');
+  java.includes('readAsset(act, "dsh-launch.sh")') || java.includes('"dsh-launch.sh"')
+    ? ok('Java 读取的启动脚本名一致') : err('LaunchPage 没有读取 dsh-launch.sh');
+}
+if (!fs.existsSync(fsScript)) err('assets/dsh-fs.sh 不存在');
+else {
+  const sh = fs.readFileSync(fsScript, 'utf8');
+  const ops = ['probe', 'list', 'read', 'write', 'mkdir', 'touch', 'rename', 'delete', 'copy', 'copyout', 'copyin', 'search'];
+  const missing = ops.filter(o => !new RegExp(`^\\s{2}${o}\\)`, 'm').test(sh));
+  missing.length ? err('dsh-fs.sh 缺少操作分支: ' + missing.join(', '))
+                 : ok(`dsh-fs.sh 12 个操作分支齐全`);
+  ['RC=0', 'B64=', 'is_protected', 'is_writable_area'].forEach(k => {
+    sh.includes(k) ? ok(`dsh-fs.sh 包含 ${k}`) : err(`dsh-fs.sh 缺少 ${k}`);
+  });
+  const fc = fs.readFileSync(path.join(ROOT, 'app/src/main/java/com/dsh/launcher/FsClient.java'), 'utf8');
+  fc.includes('"dsh-fs.sh"') ? ok('FsClient 读取的脚本名与 assets 一致') : err('FsClient 脚本名对不上');
 }
 
-/* ---------- 7. Gradle / workflow ---------- */
-console.log('\n[7] 构建配置');
+/* ---------- 8. Gradle / workflow ---------- */
+console.log('\n[8] 构建配置');
 const gradleApp = fs.readFileSync(path.join(ROOT, 'app/build.gradle.kts'), 'utf8');
-[/namespace\s*=\s*"com\.dsh\.launcher"/, /applicationId\s*=\s*"com\.dsh\.launcher"/, /compileSdk\s*=\s*34/, /minSdk\s*=\s*26/]
-  .forEach((re, i) => re.test(gradleApp) ? ok(`app/build.gradle.kts 配置项 ${i + 1} 正确`) : err(`app/build.gradle.kts 缺少配置项 ${i + 1}`));
+[
+  [/namespace\s*=\s*"com\.dsh\.launcher"/, 'namespace'],
+  [/applicationId\s*=\s*"com\.dsh\.launcher"/, 'applicationId'],
+  [/compileSdk\s*=\s*34/, 'compileSdk 34'],
+  [/minSdk\s*=\s*26/, 'minSdk 26'],
+  [/signingConfigs\s*\{/, '固定签名配置'],
+  [/storeFile\s*=\s*rootProject\.file\("tools\/debug\.keystore"\)/, '使用仓库内 debug.keystore'],
+].forEach(([re, name]) => re.test(gradleApp) ? ok(`app/build.gradle.kts: ${name}`) : err(`app/build.gradle.kts 缺少: ${name}`));
+fs.existsSync(path.join(ROOT, 'tools/debug.keystore'))
+  ? ok('tools/debug.keystore 存在（保证每次构建签名一致，可覆盖安装）')
+  : err('缺少 tools/debug.keystore');
+
 const wf = path.join(ROOT, '.github/workflows/build.yml');
 if (fs.existsSync(wf)) {
   const w = fs.readFileSync(wf, 'utf8');
-  [/assembleDebug/, /actions\/checkout@v4/, /setup-java@v4/, /gradle\/actions\/setup-gradle@v4/, /upload-artifact@v4/]
-    .forEach((re, i) => re.test(w) ? ok(`workflow 步骤 ${i + 1} 存在`) : err(`workflow 缺少步骤 ${i + 1}`));
-  if (/^\s*-\s+name:/m.test(w)) ok('workflow YAML 结构看起来正常');
+  [
+    [/assembleDebug/, 'assembleDebug'],
+    [/actions\/checkout@v4/, 'checkout'],
+    [/setup-java@v4/, 'setup-java'],
+    [/gradle\/actions\/setup-gradle@v4/, 'setup-gradle'],
+    [/upload-artifact@v4/, 'upload-artifact'],
+    [/static-check\.js/, '静态自检步骤'],
+  ].forEach(([re, name]) => re.test(w) ? ok(`workflow: ${name}`) : err(`workflow 缺少: ${name}`));
 } else err('缺少 .github/workflows/build.yml');
 
-console.log(`\n${'='.repeat(50)}`);
+console.log(`\n${'='.repeat(52)}`);
 console.log(`检查通过 ${checks} 项 | 警告 ${warnings} | 错误 ${errors}`);
 process.exit(errors ? 1 : 0);

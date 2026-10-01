@@ -36,6 +36,11 @@ jobs:
       # GitHub 托管的 ubuntu runner 已经预装 Android SDK 并设好了 ANDROID_HOME/ANDROID_SDK_ROOT，
       # 额外装一次反而会因下载 cmdline-tools 失败而中断构建。
 
+      # 先跑静态自检：XML / 资源引用 / style 继承链 / R.* / manifest / 脚本协议。
+      # 它挡掉的正是「Gradle 报一堆资源错、要翻半天日志」的那类问题。
+      - name: Static check
+        run: node tools/static-check.js .
+
       - name: Compile debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 

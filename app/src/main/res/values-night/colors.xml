@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ========== 设计令牌 · 深色 ========== -->
+    <color name="bg">#0B0F18</color>
+    <color name="surface">#141A26</color>
+    <color name="surfaceAlt">#1B2231</color>
+    <color name="surfaceSunk">#10161F</color>
+    <color name="border">#242D3D</color>
+    <color name="divider">#1E2634</color>
+
+    <color name="textPrimary">#E7ECF5</color>
+    <color name="textSecondary">#94A1B8</color>
+    <color name="textTertiary">#67748C</color>
+    <color name="textOnBrand">#FFFFFF</color>
+
+    <color name="brand">#6B85FF</color>
+    <color name="brandDark">#4D6BFE</color>
+    <color name="brandSoft">#1A2340</color>
+    <color name="brandBorder">#2A3760</color>
+
+    <color name="success">#34D399</color>
+    <color name="successSoft">#10291F</color>
+    <color name="warning">#FBBF24</color>
+    <color name="warningSoft">#2A2110</color>
+    <color name="danger">#F87171</color>
+    <color name="dangerSoft">#2C1517</color>
+
+    <color name="consoleBg">#080C14</color>
+    <color name="consoleBorder">#1A2334</color>
+    <color name="consoleText">#8FA2C2</color>
+    <color name="consoleTitle">#5D6E8E</color>
+
+    <color name="iconPlate">#1B2231</color>
+    <color name="ripple">#336B85FF</color>
+    <color name="rippleOnBrand">#40FFFFFF</color>
+    <color name="rippleDanger">#33F87171</color>
+    <color name="scrim">#B3000000</color>
+    <color name="track">#242D3D</color>
+
+    <color name="ic_launcher_background">#0B0F18</color>
+</resources>

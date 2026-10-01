@@ -1,10 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DSH 启动器</string>
-    <string name="subtitle">一键拉起 DeepSeek Harness 并打开网页</string>
-    <string name="checking">正在检测 Shizuku…</string>
-    <string name="launch">启动 DSH 并打开网页</string>
-    <string name="recheck">重新检测 Shizuku</string>
+    <string name="app_tagline">DeepSeek Harness 控制台</string>
+
+    <!-- 底部导航 -->
+    <string name="nav_launch">启动</string>
+    <string name="nav_files">文件</string>
+    <string name="nav_settings">设置</string>
+
+    <!-- 启动页 -->
+    <string name="hero_label">本地服务状态</string>
+    <string name="state_unknown">检测中</string>
+    <string name="state_running">运行中</string>
+    <string name="state_stopped">未运行</string>
+    <string name="state_starting">正在启动</string>
+    <string name="state_down">启动失败</string>
+    <string name="state_desc_idle">点击下方按钮一键拉起 Termux 并进入网页</string>
+    <string name="state_desc_running">服务已在监听，点按钮直接进入网页</string>
+    <string name="state_desc_starting">正在拉起 Termux 进程，请稍候…</string>
+    <string name="state_desc_down">没有拿到地址，检查 Termux 里的脚本与日志</string>
+    <string name="btn_launch">启动并打开网页</string>
+    <string name="btn_open_web">打开网页</string>
+    <string name="btn_relaunch">重启并打开</string>
+    <string name="btn_check">检测状态</string>
+    <string name="info_title">运行信息</string>
+    <string name="info_url">访问地址</string>
+    <string name="info_termux">Termux</string>
+    <string name="info_shizuku">Shizuku</string>
+    <string name="info_workspace">工作区</string>
+    <string name="info_port">端口</string>
     <string name="log_title">运行日志</string>
     <string name="log_empty">（暂无日志）</string>
+    <string name="act_copy">复制</string>
+    <string name="act_clear">清空</string>
+    <string name="copied">已复制到剪贴板</string>
+
+    <!-- 文件页 -->
+    <string name="files_root">工作区</string>
+    <string name="chip_workspace">工作区</string>
+    <string name="chip_home">HOME</string>
+    <string name="chip_shared">共享存储</string>
+    <string name="chip_download">下载</string>
+    <string name="state_loading">正在读取…</string>
+    <string name="state_empty_title">这个目录是空的</string>
+    <string name="state_empty_desc">用右下角的按钮新建文件或从手机导入</string>
+    <string name="state_error_title">读取失败</string>
+    <string name="act_retry">重试</string>
+    <string name="fab_new">新建</string>
+    <string name="sheet_new_folder">新建文件夹</string>
+    <string name="sheet_new_file">新建文件</string>
+    <string name="sheet_import">从手机导入到此处</string>
+    <string name="sheet_refresh">刷新</string>
+    <string name="sheet_deep_search">在当前目录深度搜索</string>
+    <string name="sheet_sort">排序方式</string>
+    <string name="sheet_hidden">显示隐藏文件</string>
+    <string name="sheet_set_workspace">把当前目录设为工作区</string>
+    <string name="sheet_open_with">用其他文件管理器打开此处</string>
+    <string name="sheet_open_file_with">用其他应用打开这个文件</string>
+    <string name="sheet_edit">编辑内容</string>
+    <string name="sheet_view">查看内容</string>
+    <string name="sheet_rename">重命名</string>
+    <string name="sheet_delete">删除</string>
+    <string name="sheet_copy_path">复制完整路径</string>
+    <string name="sheet_export">导出到共享存储</string>
+    <string name="sheet_save_phone">另存到手机</string>
+    <string name="sheet_copy">创建副本</string>
+    <string name="sheet_info">属性</string>
+    <string name="sheet_sync_back">从共享存储同步回来</string>
+    <string name="sort_name">名称</string>
+    <string name="sort_size">大小</string>
+    <string name="sort_time">修改时间</string>
+    <string name="sort_asc">升序</string>
+    <string name="sort_desc">降序</string>
+    <string name="sort_folder_first">文件夹优先</string>
+
+    <!-- 对话框 -->
+    <string name="dlg_ok">确定</string>
+    <string name="dlg_cancel">取消</string>
+    <string name="dlg_save">保存</string>
+    <string name="dlg_delete_title">确认删除</string>
+    <string name="dlg_delete_msg">删除后无法从 App 里恢复，确定继续吗？</string>
+    <string name="dlg_rename_title">重命名</string>
+    <string name="dlg_new_folder_title">新建文件夹</string>
+    <string name="dlg_new_file_title">新建文件</string>
+    <string name="hint_name">名称</string>
+    <string name="hint_path">绝对路径</string>
+    <string name="err_bad_name">名称不合法</string>
+
+    <!-- 编辑器 -->
+    <string name="editor_title">编辑</string>
+    <string name="editor_save">保存</string>
+    <string name="editor_saved">已保存</string>
+    <string name="editor_unsaved">有未保存的修改</string>
+    <string name="editor_discard_title">放弃修改？</string>
+    <string name="editor_discard_msg">当前文件有未保存的内容，返回将丢失这些修改。</string>
+    <string name="editor_discard_ok">放弃</string>
+    <string name="editor_too_big">文件太大，只加载了前面一部分</string>
+    <string name="editor_binary">这像是二进制文件，已按文本显示可能乱码</string>
+    <string name="editor_lines">行</string>
+
+    <!-- 设置页 -->
+    <string name="settings_workspace">工作区目录</string>
+    <string name="settings_workspace_desc">文件页的起始目录，也是导出镜像的根</string>
+    <string name="settings_port">DSH 端口</string>
+    <string name="settings_host">访问方式</string>
+    <string name="settings_local">仅本机 127.0.0.1</string>
+    <string name="settings_lan">局域网 0.0.0.0</string>
+    <string name="settings_shared_dir">共享存储导出目录</string>
+    <string name="settings_sort">默认排序</string>
+    <string name="settings_hidden">显示隐藏文件</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_version">版本</string>
+    <string name="settings_toolchain">文件通道</string>
+    <string name="settings_toolchain_desc">通过 Termux RUN_COMMAND 读写 Termux 私有目录</string>
+    <string name="settings_reset">恢复默认设置</string>
+    <string name="settings_reset_done">已恢复默认设置</string>
+    <string name="settings_saved">已保存</string>
+    <string name="about_desc">把 Termux 里的 DeepSeek Harness 一键拉起，并在手机上管理工作区文件。</string>
+
+    <!-- 权限 / 提示 -->
+    <string name="perm_need">需要 Termux 的 RUN_COMMAND 权限，正在申请…</string>
+    <string name="perm_denied">权限被拒绝，请到 系统设置 → 应用 → DSH 启动器 → 权限 手动允许</string>
+    <string name="no_termux">没检测到 Termux，请先安装</string>
+    <string name="termux_not_ready">Termux 未响应，请确认已开启 allow-external-apps=true</string>
+    <string name="shizuku_none">未安装</string>
+    <string name="shizuku_off">已安装，未运行</string>
+    <string name="shizuku_on">运行中</string>
+    <string name="shizuku_err">检测异常</string>
+    <string name="open_with_none">没有找到能处理这个位置的文件管理器</string>
+    <string name="open_with_title">用其他应用打开</string>
+    <string name="open_with_export_hint">Termux 私有目录其他 App 读不到，先镜像到共享存储再打开</string>
+    <string name="export_done">已导出到共享存储</string>
+    <string name="export_fail">导出失败</string>
+    <string name="exporting">正在导出…</string>
+    <string name="import_done">已导入到工作区</string>
+    <string name="import_fail">导入失败</string>
+    <string name="importing">正在导入…</string>
+    <string name="busy_wait">正在处理…</string>
+    <string name="op_fail">操作失败</string>
+    <string name="op_done">操作完成</string>
+    <string name="clipboard_path">已复制路径</string>
 </resources>

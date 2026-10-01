@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="s_xs">4dp</dimen>
+    <dimen name="s_s">8dp</dimen>
+    <dimen name="s_m">12dp</dimen>
+    <dimen name="s_l">16dp</dimen>
+    <dimen name="s_xl">20dp</dimen>
+    <dimen name="s_2xl">28dp</dimen>
+
+    <dimen name="r_s">10dp</dimen>
+    <dimen name="r_m">14dp</dimen>
+    <dimen name="r_l">18dp</dimen>
+    <dimen name="r_xl">24dp</dimen>
+    <dimen name="r_pill">999dp</dimen>
+
+    <dimen name="t_display">26sp</dimen>
+    <dimen name="t_hero">30sp</dimen>
+    <dimen name="t_title">17sp</dimen>
+    <dimen name="t_body">15sp</dimen>
+    <dimen name="t_label">13sp</dimen>
+    <dimen name="t_micro">11sp</dimen>
+    <dimen name="t_mono">12sp</dimen>
+
+    <dimen name="icon_s">18dp</dimen>
+    <dimen name="icon_m">22dp</dimen>
+    <dimen name="icon_l">26dp</dimen>
+    <dimen name="plate_s">32dp</dimen>
+    <dimen name="plate_m">40dp</dimen>
+    <dimen name="plate_l">46dp</dimen>
+    <dimen name="touch">44dp</dimen>
+    <dimen name="row_min">64dp</dimen>
+    <dimen name="nav_h">62dp</dimen>
+    <dimen name="fab">58dp</dimen>
+</resources>
