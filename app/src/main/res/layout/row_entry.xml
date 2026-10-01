@@ -17,7 +17,7 @@
         android:layout_height="@dimen/plate_m"
         android:background="@drawable/bg_plate">
 
-        <com.dsh.launcher.ui.GlyphView
+        <com.dsh.launcher.GlyphView
             android:id="@+id/rowGlyph"
             android:layout_width="@dimen/icon_m"
             android:layout_height="@dimen/icon_m"

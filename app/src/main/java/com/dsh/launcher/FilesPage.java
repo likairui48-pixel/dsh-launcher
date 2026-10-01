@@ -52,6 +52,7 @@ public class FilesPage {
     private boolean started;
 
     public FilesPage(MainActivity act) {
+        CrashLog.breadcrumb("FilesPage:ctor 开始");
         this.act = act;
         this.prefs = Prefs.get(act);
         root = LayoutInflater.from(act).inflate(R.layout.page_files, null);
@@ -133,6 +134,7 @@ public class FilesPage {
         });
 
         render();
+        CrashLog.breadcrumb("FilesPage:ctor 完成");
     }
 
     public View view() {

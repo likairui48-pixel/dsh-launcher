@@ -14,7 +14,7 @@
     android:paddingTop="@dimen/s_m"
     android:paddingBottom="@dimen/s_m">
 
-    <com.dsh.launcher.ui.GlyphView
+    <com.dsh.launcher.GlyphView
         android:id="@+id/actionGlyph"
         android:layout_width="@dimen/icon_m"
         android:layout_height="@dimen/icon_m"

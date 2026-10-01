@@ -33,24 +33,34 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CrashLog.breadcrumb("MA:onCreate 开始");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        CrashLog.breadcrumb("MA:setContentView 完成");
         prefs = Prefs.get(this);
 
         host = findViewById(R.id.pageHost);
         navBar = findViewById(R.id.navBar);
+        CrashLog.breadcrumb("MA:view 绑定完成");
 
         launchPage = new LaunchPage(this);
+        CrashLog.breadcrumb("MA:LaunchPage 构造完成");
         filesPage = new FilesPage(this);
+        CrashLog.breadcrumb("MA:FilesPage 构造完成");
         settingsPage = new SettingsPage(this);
+        CrashLog.breadcrumb("MA:SettingsPage 构造完成");
 
         host.addView(launchPage.view(), match());
         host.addView(filesPage.view(), match());
         host.addView(settingsPage.view(), match());
+        CrashLog.breadcrumb("MA:页面挂载完成");
 
         buildNav();
+        CrashLog.breadcrumb("MA:底部导航构建完成");
         showTab(0);
+        CrashLog.breadcrumb("MA:showTab(0) 完成");
         maybeProbe();
+        CrashLog.breadcrumb("MA:onCreate 全部完成");
     }
 
     private FrameLayout.LayoutParams match() {
@@ -159,6 +169,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        CrashLog.breadcrumb("MA:onResume");
         if (launchPage != null) {
             launchPage.refreshInfo();
         }

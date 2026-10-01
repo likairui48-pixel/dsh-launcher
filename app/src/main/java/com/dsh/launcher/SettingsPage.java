@@ -19,8 +19,10 @@ public class SettingsPage {
     private final Switch swHidden;
     private final TextView tvSortValue;
     private final TextView tvWorkspaceHint;
+    private final TextView tvDiagState;
 
     public SettingsPage(MainActivity act) {
+        CrashLog.breadcrumb("SettingsPage:ctor 开始");
         this.act = act;
         this.prefs = Prefs.get(act);
         root = LayoutInflater.from(act).inflate(R.layout.page_settings, null);
@@ -32,6 +34,14 @@ public class SettingsPage {
         tvSortValue = root.findViewById(R.id.tvSortValue);
         tvWorkspaceHint = root.findViewById(R.id.tvWorkspaceHint);
         TextView tvVersion = root.findViewById(R.id.tvVersion);
+        tvDiagState = root.findViewById(R.id.tvDiagState);
+
+        root.findViewById(R.id.rowDiag).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                diagSheet();
+            }
+        });
 
         tvVersion.setText(versionName());
 
@@ -92,6 +102,7 @@ public class SettingsPage {
         });
 
         bind();
+        CrashLog.breadcrumb("SettingsPage:ctor 完成");
     }
 
     public View view() {
@@ -108,6 +119,11 @@ public class SettingsPage {
         swLan.setChecked(prefs.lan());
         swHidden.setChecked(prefs.showHidden());
         tvSortValue.setText(sortLabel());
+        if (tvDiagState != null) {
+            tvDiagState.setText(CrashLog.lastReport().length() > 0
+                    ? act.getString(R.string.diag_exists) + " · /sdcard/Download/" + CrashLog.NAME
+                    : act.getString(R.string.diag_path));
+        }
         tvWorkspaceHint.setText(R.string.settings_workspace_desc);
     }
 
@@ -170,6 +186,47 @@ public class SettingsPage {
         });
     }
 
+    private void diagSheet() {
+        final String rep = CrashLog.lastReport();
+        Sheet s = Sheet.create(act, act.getString(R.string.settings_diag),
+                rep.length() == 0 ? act.getString(R.string.diag_empty)
+                        : act.getString(R.string.diag_exists) + " · /sdcard/Download/" + CrashLog.NAME);
+        s.action("info", act.getString(R.string.diag_view), 0, new Util.Run() {
+            @Override
+            public void run() {
+                String text = CrashLog.lastReport();
+                if (text.length() == 0) {
+                    text = act.getString(R.string.diag_empty);
+                }
+                if (text.length() > 3500) {
+                    text = text.substring(0, 3500) + "\n…（已截断）";
+                }
+                new android.app.AlertDialog.Builder(act, R.style.AppTheme_Dialog)
+                        .setTitle(R.string.settings_diag)
+                        .setMessage(text)
+                        .setPositiveButton(R.string.dlg_ok, null)
+                        .show();
+            }
+        });
+        s.action("copy", act.getString(R.string.sheet_copy_path), 0, new Util.Run() {
+            @Override
+            public void run() {
+                Util.copy(act, "path", "/sdcard/Download/" + CrashLog.NAME);
+                Util.toast(act, act.getString(R.string.clipboard_path));
+            }
+        });
+        s.action("trash", act.getString(R.string.diag_clear), R.color.danger, new Util.Run() {
+            @Override
+            public void run() {
+                CrashLog.clear();
+                bind();
+                Util.toast(act, act.getString(R.string.diag_cleared));
+            }
+        });
+        s.cancel();
+        s.show();
+    }
+
     private void sortSheet() {
         final Sheet s = Sheet.create(act, act.getString(R.string.sheet_sort));
         final boolean asc = prefs.sortAsc();
@@ -218,6 +275,11 @@ public class SettingsPage {
 
     private void afterSort() {
         tvSortValue.setText(sortLabel());
+        if (tvDiagState != null) {
+            tvDiagState.setText(CrashLog.lastReport().length() > 0
+                    ? act.getString(R.string.diag_exists) + " · /sdcard/Download/" + CrashLog.NAME
+                    : act.getString(R.string.diag_path));
+        }
         act.onSettingsChanged();
     }
 }

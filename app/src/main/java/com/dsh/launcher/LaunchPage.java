@@ -39,6 +39,7 @@ public class LaunchPage {
     private String lanUrl;
 
     public LaunchPage(MainActivity act) {
+        CrashLog.breadcrumb("LaunchPage:ctor 开始");
         this.act = act;
         this.prefs = Prefs.get(act);
         root = LayoutInflater.from(act).inflate(R.layout.page_launch, null);
@@ -83,6 +84,7 @@ public class LaunchPage {
 
         setState("unknown");
         log("就绪。点「启动并打开网页」即可。");
+        CrashLog.breadcrumb("LaunchPage:ctor 完成");
     }
 
     public View view() {

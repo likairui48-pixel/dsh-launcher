@@ -146,6 +146,7 @@ else ok('所有 style 的显式 / 隐式父样式都存在');
 
 /* ---------- 4. Java 里的 R.* ---------- */
 console.log('\n[4] Java 中的 R.* 引用');
+const mfSrc = fs.readFileSync(path.join(ROOT, 'app/src/main/AndroidManifest.xml'), 'utf8');
 const layoutIds = new Set();
 for (const f of walk(path.join(resDir, 'layout'))) {
   const src = fs.readFileSync(f, 'utf8');
@@ -191,6 +192,54 @@ for (const f of javaFiles) {
   }
 }
 ok(`${scopeChecked} 处 R.id 引用的作用域全部落在对应布局内`);
+
+/* ---------- 4c. 布局里的自定义 View 类必须真实存在 ---------- */
+// aapt2 与 javac 都不校验自定义 View 的类名，写错了要到运行期 inflate 才炸
+// （ClassNotFoundException -> InflateException -> 一打开就闪退）。
+const javaFqns = new Map();   // 全限定类名 -> 源文件，按完整包路径比对
+for (const f of javaFiles) {
+  const src = fs.readFileSync(f, 'utf8');
+  const pkg = (src.match(/^\s*package\s+([\w.]+)\s*;/m) || [])[1];
+  const cls = path.basename(f, '.java');
+  if (pkg) javaFqns.set(pkg + '.' + cls, path.relative(ROOT, f));
+}
+const javaClasses = new Set(javaFiles.map(f => path.basename(f, '.java')));
+const customViews = new Map();
+for (const f of walk(path.join(resDir, 'layout'))) {
+  const src = fs.readFileSync(f, 'utf8');
+  for (const m of src.matchAll(/<([a-zA-Z_][\w.]*\.[A-Za-z_]\w*)\s/g)) {
+    const tag = m[1];
+    if (['android.view', 'android.widget', 'android.webkit', 'android.app'].some(p => tag.startsWith(p))) continue;
+    if (!customViews.has(tag)) customViews.set(tag, []);
+    customViews.get(tag).push(path.basename(f));
+  }
+}
+let viewChecked = 0;
+for (const [tag, where] of customViews) {
+  viewChecked++;
+  if (tag.startsWith('com.dsh.launcher.')) {
+    if (!javaFqns.has(tag)) {
+      err(`布局引用了不存在的自定义 View：<${tag}>（${where.join(', ')}）→ 运行期 InflateException 闪退`);
+    }
+  } else if (!/^(androidx|android|com\.google\.android|rikka)\./.test(tag)) {
+    warn(`布局引用了无法本地校验的第三方 View：<${tag}>（${where.join(', ')}）`);
+  }
+}
+ok(`${viewChecked} 种自定义 View 引用已校验（${[...customViews.keys()].join(', ')}）`);
+
+/* ---------- 4d. Manifest 里声明的类必须真实存在 ---------- */
+const classRefs = [];
+for (const m of mfSrc.matchAll(/android:name="\.([A-Za-z_]\w*)"/g)) classRefs.push(m[1]);
+for (const m of mfSrc.matchAll(/android:name="(com\.dsh\.launcher\.[A-Za-z_]\w*)"/g)) classRefs.push(m[1].split('.').pop());
+let clsChecked = 0;
+for (const cls of classRefs) {
+  clsChecked++;
+  const fqn = 'com.dsh.launcher.' + cls;
+  if (!javaFqns.has(fqn)) {
+    err(`AndroidManifest 声明的类不存在：${fqn} → 启动即崩`);
+  }
+}
+ok(`${clsChecked} 个 Manifest 类声明（Activity / Application / Provider）全部有对应源码`);
 
 /* ---------- 5. Java 结构 ---------- */
 console.log('\n[5] Java 结构检查');

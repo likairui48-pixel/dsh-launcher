@@ -16,7 +16,7 @@
         android:paddingRight="@dimen/s_l"
         android:paddingBottom="@dimen/s_s">
 
-        <com.dsh.launcher.ui.GlyphView
+        <com.dsh.launcher.GlyphView
             android:id="@+id/btnBack"
             android:layout_width="@dimen/touch"
             android:layout_height="@dimen/touch"

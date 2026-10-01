@@ -25,7 +25,7 @@
                 android:layout_height="@dimen/plate_l"
                 android:background="@drawable/bg_plate_brand">
 
-                <com.dsh.launcher.ui.GlyphView
+                <com.dsh.launcher.GlyphView
                     android:layout_width="@dimen/icon_l"
                     android:layout_height="@dimen/icon_l"
                     android:layout_gravity="center"
