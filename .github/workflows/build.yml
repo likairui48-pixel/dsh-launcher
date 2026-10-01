@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# 同一个分支只保留最新一次构建，避免连续提交炸出一堆并发任务
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,13 +27,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
+
+      # 注意：不用 android-actions/setup-android。
+      # GitHub 托管的 ubuntu runner 已经预装 Android SDK 并设好了 ANDROID_HOME/ANDROID_SDK_ROOT，
+      # 额外装一次反而会因下载 cmdline-tools 失败而中断构建。
 
       - name: Compile debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
