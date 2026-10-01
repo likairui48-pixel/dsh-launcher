@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DSH 启动器</string>
+    <string name="subtitle">一键拉起 DeepSeek Harness 并打开网页</string>
+    <string name="checking">正在检测 Shizuku…</string>
+    <string name="launch">启动 DSH 并打开网页</string>
+    <string name="recheck">重新检测 Shizuku</string>
+    <string name="log_title">运行日志</string>
+    <string name="log_empty">（暂无日志）</string>
+</resources>
