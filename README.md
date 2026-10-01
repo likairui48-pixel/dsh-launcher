@@ -100,6 +100,21 @@ bash tools/build-local.sh                    # 产物：build-local/dsh-launcher
 | `android.jar` | Android SDK Platform 34（如 `platform-34-ext7_r03.zip`） |
 | `shizuku-api.jar` | `dev.rikka.shizuku:api:13.1.5` 的 aar 里的 `classes.jar` |
 
+### 本机推送（github.com:443 不可达时）
+
+本机实测 `github.com:443` 直连超时、`api.github.com` 正常；而 `~/.gitconfig` 里往往有
+`url.*.insteadOf` 把 github.com 重写到第三方镜像，**git 直推会把 token 交给镜像方**。
+
+`tools/push-via-api.py` 绕开 git remote，只用 Git Data API 上传 blob / 建 tree / 建 commit / 更新 ref：
+
+```bash
+printf '%s' '<你的 PAT>' > ~/.dsh-gh-token && chmod 600 ~/.dsh-gh-token
+python3 tools/push-via-api.py
+```
+
+它会照抄本地的 author / committer / date / message，因此**远端 commit 与本地 SHA 完全一致**，历史不会分叉。
+（日期要写成 UTC：GitHub 会把带偏移的时间归一化成 UTC，用 `+0000` 才能对上哈希。）
+
 ## 自检工具
 
 ```bash
